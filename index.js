@@ -1,16 +1,18 @@
 // import { ServiceBroker } from "moleculer";
 import UserService from "./services/user.service.js";
 import EmailService from "./services/email.service.js";
+import AuthService from "./services/auth.service.js";
 
 async function startApp() {
   // start service
   await UserService.start();
   await EmailService.start();
+  await AuthService.start();
 
   // call action
   try {
     const newUser = await UserService.call("user.createUser", {
-      name: "Arush",
+      name: "arush",
       email: "arush@gmail.com",
     });
     console.log("New User Created : ", newUser);
@@ -25,11 +27,22 @@ async function startApp() {
       subject: "Welcome to the world of Arushan",
       body: "You are registered successfully",
     });
+
+    console.log("Email Response : ", emailResponse);
+
+    // auth
+    const authResponse = await AuthService.call("auth.authUser", {
+      userName: newUser.name,
+      password: "arush",
+    });
+    console.log("Auth Response : ", authResponse);
   } catch (err) {
     console.log(err);
   } finally {
     // stop service
     await UserService.stop();
+    await EmailService.stop();
+    await AuthService.stop();
   }
 }
 

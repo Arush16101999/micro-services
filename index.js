@@ -1,9 +1,11 @@
 // import { ServiceBroker } from "moleculer";
 import UserService from "./services/user.service.js";
+import EmailService from "./services/email.service.js";
 
 async function startApp() {
   // start service
   await UserService.start();
+  await EmailService.start();
 
   // call action
   try {
@@ -16,6 +18,13 @@ async function startApp() {
     // get the users
     const users = await UserService.call("user.getUser");
     console.log("All Users : ", users);
+
+    // email sending
+    const emailResponse = await EmailService.call("email.sendEmail", {
+      to: newUser.email,
+      subject: "Welcome to the world of Arushan",
+      body: "You are registered successfully",
+    });
   } catch (err) {
     console.log(err);
   } finally {

@@ -1,7 +1,34 @@
-import { ServiceBroker } from "moleculer";
+// import { ServiceBroker } from "moleculer";
+import UserService from "./services/user.service.js";
 
-const broker = new ServiceBroker();
+async function startApp() {
+  // start service
+  await UserService.start();
 
+  // call action
+  try {
+    const newUser = await UserService.call("user.createUser", {
+      name: "Arush",
+      email: "arush@gmail.com",
+    });
+    console.log("New User Created : ", newUser);
+
+    // get the users
+    const users = await UserService.call("user.getUser");
+    console.log("All Users : ", users);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    // stop service
+    await UserService.stop();
+  }
+}
+
+startApp();
+
+// const broker = new ServiceBroker();
+
+/** 
 //greeter Service
 broker.createService({
   name: "greeter",
@@ -20,3 +47,4 @@ async function startApp() {
 }
 
 startApp();
+*/
